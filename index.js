@@ -82,6 +82,19 @@ async function run() {
             res.send(result);
         })
 
+        //UPDATE ORDER STATUS API
+        app.put('/order/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: false };
+            const updateDoc = {
+                $set: {
+                    "isApproved": "done",
+                },
+            };
+            const result = await orderCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
     }
     finally {
         // await client.close();
