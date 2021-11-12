@@ -18,19 +18,19 @@ async function run() {
     try {
         await client.connect();
         // create database
-        const database = client.db('tourism_db');
+        const database = client.db('lifan_bike_db');
         // create database table or collection.
-        const packageCollection = database.collection('packages');
-        const orderCollection = database.collection('orders');
+        const productCollection = database.collection('products');
+        // const orderCollection = database.collection('orders');
         console.log("Database is Connected with server")
 
 
-        //GET ALL Package API
-        app.get('/packages', async (req, res) => {
-            const cursor = packageCollection.find({});
-            packages = await cursor.toArray();
+        //GET ALL Product API
+        app.get('/products', async (req, res) => {
+            const cursor = productCollection.find({});
+            products = await cursor.toArray();
             res.send({
-                packages
+                products
             });
         });
 
@@ -105,7 +105,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Tourism server is running');
+    res.send('Bike site server is running');
 });
 
 app.listen(port, () => {
