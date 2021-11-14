@@ -20,8 +20,10 @@ async function run() {
         // create database
         const database = client.db('lifan_bike_db');
         // create database table or collection.
+        const usersCollection = database.collection('users');
         const productCollection = database.collection('products');
-        // const orderCollection = database.collection('orders');
+        const orderCollection = database.collection('orders');
+        const reviewCollection = database.collection('reviews');
         console.log("Database is Connected with server")
 
 
@@ -34,18 +36,18 @@ async function run() {
             });
         });
 
-        // GET Single Package
-        app.get('/packages/:id', async (req, res) => {
+        // GET Single Product
+        app.get('/product/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
-            const package = await packageCollection.findOne(query);
+            const package = await productCollection.findOne(query);
             res.send(package);
         })
 
-        // POST API ADD SINGLE PACKAGE
-        app.post('/package', async (req, res) => {
-            const package = req.body;
-            const result = await packageCollection.insertOne(package);
+        // POST API ADD SINGLE PRODUCT
+        app.post('/product', async (req, res) => {
+            const product = req.body;
+            const result = await productCollection.insertOne(product);
             res.json(result)
         });
 
@@ -56,13 +58,29 @@ async function run() {
             res.json(result)
         });
 
+        // POST API ADD REVIEW
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.json(result)
+        });
+
+        //GET ALL REVIEW API
+        app.get('/reviews', async (req, res) => {
+            const cursor = reviewCollection.find({});
+            reviews = await cursor.toArray();
+            res.send({
+                reviews
+            });
+        });
+
         //GET ALL ORDER API
         app.get('/all-orders', async (req, res) => {
             const cursor = orderCollection.find({});
             orders = await cursor.toArray();
-            res.send(
+            res.send({
                 orders
-            );
+            });
         });
 
         //GET SPECIFIC USER ORDER
@@ -74,11 +92,19 @@ async function run() {
             res.send(orders);
         })
 
-        // DELETE API
+        // DELETE SINGLE ORDER API
         app.delete('/order/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        // DELETE SINGLE PRODUCT API
+        app.delete('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
             res.send(result);
         })
 
@@ -95,6 +121,50 @@ async function run() {
             const result = await orderCollection.updateOne(filter, updateDoc, options)
             res.send(result)
         })
+
+        //GET ALL USERS API
+        app.get('/users', async (req, res) => {
+            const cursor = usersCollection.find({});
+            users = await cursor.toArray();
+            res.send({
+                users
+            });
+        });
+
+        // GET Single user api
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            res.send(user);
+        })
+
+        // ADD USER TO DB API
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.json(result);
+        });
+
+        // ADD UPDATE OR INSERT USER TO DB API
+        app.put('/users', async (req, res) => {
+            const user = req.body;
+            const filter = { email: user.email };
+            const options = { upsert: true };
+            const updateDoc = { $set: user };
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
+        });
+
+        // ADD UPDATE SINGLE USER API
+        app.put('/users/admin/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = { $set: { role: 'admin' } };
+            const result = await usersCollection.updateOne(filter, updateDoc);
+            res.json(result);
+        });
+
     }
     finally {
         // await client.close();
@@ -105,7 +175,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Bike site server is running');
+    res.send('Bike Point server is running');
 });
 
 app.listen(port, () => {
