@@ -1,4 +1,4 @@
-<b>BikePoint Server Link:</b> : . 
+<b>BikePoint Server Link:</b> https://desolate-badlands-81980.herokuapp.com/users 
 </br> 
 
 <b>Available Feature of this server:</b>
