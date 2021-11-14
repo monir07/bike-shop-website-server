@@ -1,4 +1,4 @@
-<b>Tourism -Site Server Link:</b> : https://fathomless-falls-34932.herokuapp.com/all-orders. 
+<b>BikePoint Server Link:</b> : . 
 </br> 
 
 <b>Available Feature of this server:</b>
